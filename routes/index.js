@@ -16,8 +16,6 @@ client.connect(err => {
   // perform actions on the collection object
   client.close();
 });
-// password: BugfexRacfJjG7y
-// dbname: SW-VNA
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index');
