@@ -74,23 +74,46 @@ router.post('/insert', function(req, res, next) {
   res.redirect('/');
 });
 
-router.post('/update', function(req, res, next) {
-  var id = req.body.id;
+// router.post('/update', function(req, res, next) {
+//   var id = req.body.id;
 
+//   MongoClient.connect(url, function(err, client){
+//     assert.equal(null, err);
+//     const db = client.db(dbName);
+//     db.collection('user-data').findById(id, function(err, doc){
+//       assert.equal(null, err);
+//       doc.Name = req.body.Name;
+//       doc.Email = req.body.Email;
+//       doc.DOB = req.body.DOB;
+//       doc.HashedPassword = req.body.HashedPassword;
+//       doc.jobTitle = req.body.jobTitle;
+//       doc.phone = req.body.phone;
+//       doc.projects = req.body.projects;
+//       doc.save();
+//       console.log('Item updated');
+//       client.close();
+//     });
+//   });
+//   res.redirect('/get-data');
+// });
+router.post('/update', function(req, res, next) {
+  const filter = {"_id": req.body.id};
+  const update = {
+      Name: req.body.Name,
+      Email: req.body.Email,
+      DOB:  req.body.DOB,
+      hashedPassword: req.body.hashedPassword,
+      jobTitle: req.body.jobTitle,
+      phone: req.body.phone,
+      projects: req.body.projects,
+  };
   MongoClient.connect(url, function(err, client){
-    assert.equal(null, err);
     const db = client.db(dbName);
-    db.collection('user-data').findById(id, function(err, doc){
+    db.collection('user-data').findOneAndUpdate(filter, update, {upsert:true},{new: true}, function(err, doc){
       assert.equal(null, err);
-      doc.Name = req.body.Name;
-      doc.Email = req.body.Email;
-      doc.DOB = req.body.DOB;
-      doc.HashedPassword = req.body.HashedPassword;
-      doc.jobTitle = req.body.jobTitle;
-      doc.phone = req.body.phone;
-      doc.projects = req.body.projects;
-      doc.save();
+      if(err) return console.log(err);
       console.log('Item updated');
+      console.log(doc);
       client.close();
     });
   });
@@ -102,7 +125,7 @@ router.post('/delete', function(req, res, next) {
   MongoClient.connect(url, function(err, client){
     assert.equal(null, err);
     const db = client.db(dbName);
-    db.collection('user-data').findByIdAndRemove(id).exec;
+    db.collection('user-data').findByIdAndRemove(id).exec();
     client.close();
   });
   // UserData.findByIdAndRemove(id).exec();
