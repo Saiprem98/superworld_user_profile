@@ -97,7 +97,7 @@ router.post('/insert', function(req, res, next) {
 //   res.redirect('/get-data');
 // });
 router.post('/update', function(req, res, next) {
-  const filter = {"_id": req.body.id};
+  var idUser = String(req.body.id);
   const update = {
       Name: req.body.Name,
       Email: req.body.Email,
@@ -109,10 +109,19 @@ router.post('/update', function(req, res, next) {
   };
   MongoClient.connect(url, function(err, client){
     const db = client.db(dbName);
-    db.collection('user-data').findOneAndUpdate(filter, update, {upsert:true},{new: true}, function(err, doc){
-      assert.equal(null, err);
-      if(err) return console.log(err);
-      console.log('Item updated');
+    const col = db.collection('user-data')
+    col.updateOne({_id :new ObjectId(idUser)}, {$set: {
+      Name: req.body.Name,
+      Email: req.body.Email,
+      DOB:  req.body.DOB,
+      hashedPassword: req.body.hashedPassword,
+      jobTitle: req.body.jobTitle,
+      phone: req.body.phone,
+      projects: req.body.projects}}, {upsert:true},{new: true}, function(err, doc){
+          if (!err) {
+            res.redirect('/get-data');
+        }
+        else { console.log('Error in User delete :' + err); }
       console.log(doc);
       client.close();
     });
