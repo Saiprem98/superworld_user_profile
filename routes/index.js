@@ -1,6 +1,7 @@
 
 // mongod --dbpath=/Users/saikathika/data/db
 var express = require('express');
+var ObjectId = require('mongodb').ObjectID;
 var router = express.Router();
 var assert = require('assert');
 // var url = "mongodb://localhost:27017";
@@ -13,7 +14,6 @@ const url = "mongodb+srv://HK_superworld:BugfexRacfJjG7y@superworldvna.gxlyf.mon
 const client = new MongoClient(url, { useNewUrlParser: true });
 client.connect(err => {
   const collection = client.db("test").collection("user-data");
-  // perform actions on the collection object
   client.close();
 });
 /* GET home page. */
@@ -121,15 +121,26 @@ router.post('/update', function(req, res, next) {
 });
 
 router.post('/delete', function(req, res, next) {
-  var id = req.body.id;
+  var idRemove = String(req.body.id);
+  console.log("In delete method removing ");
+  console.log(idRemove);
   MongoClient.connect(url, function(err, client){
-    assert.equal(null, err);
+      if (err) {
+        console.log('Error in User delete :' + err);
+    }
     const db = client.db(dbName);
-    db.collection('user-data').findByIdAndRemove(id).exec();
+    const col = db.collection('user-data');
+    console.log("In delete method");
+    // db.collection('user-data').findByIdAndRemove(id).exec();
+    col.deleteOne({_id :new ObjectId(idRemove)},(err, doc) => {
+      if (!err) {
+        res.redirect('/get-data');
+    }
+    else { console.log('Error in User delete :' + err); }
+    });
+    console.log(" delete method");
     client.close();
-  });
-  // UserData.findByIdAndRemove(id).exec();
-  res.redirect('/get-data');
+  });  
 });
 
 module.exports = router;
