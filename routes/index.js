@@ -5,7 +5,6 @@ var assert = require('assert');
 const dbName = 'test';
 
 const MongoClient = require('mongodb').MongoClient;
-const url = "mongodb+srv://HK_superworld:BugfexRacfJjG7y@superworldvna.gxlyf.mongodb.net/test?retryWrites=true&w=majority";
 const client = new MongoClient(url, { useNewUrlParser: true });
 
 /* GET home page. */
